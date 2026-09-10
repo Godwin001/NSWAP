@@ -1,0 +1,82 @@
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+body { background-color: #f1f5f9; color: #0f172a; }
+
+.app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; background: #ffffff; display: flex; flex-direction: column; }
+.screen { padding: 20px; }
+.card { background: #ffffff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+
+.hidden { display: none !important; }
+.mt-10 { margin-top: 10px; }
+.mt-15 { margin-top: 15px; }
+.mb-20 { margin-bottom: 20px; }
+
+/* Auth Screen Tabs */
+.auth-tabs { display: flex; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; }
+.auth-tab { flex: 1; padding: 10px; background: none; border: none; font-weight: 600; font-size: 0.85rem; color: #64748b; cursor: pointer; }
+.auth-tab.active { color: #2563eb; border-bottom: 2px solid #2563eb; }
+
+/* Payment & Initiation Screen Styles */
+.payment-instructions-box { background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 15px; margin-top: 15px; }
+.payment-status-badge { display: inline-block; background-color: #fef3c7; color: #92400e; font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; margin-bottom: 8px; text-transform: uppercase; }
+.payment-desc { font-size: 0.85rem; color: #475569; line-height: 1.4; margin-bottom: 12px; }
+.payment-details-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; }
+.pay-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 4px 0; }
+.pay-row:not(:last-child) { border-bottom: 1px solid #f1f5f9; }
+.email-link { color: #2563eb; font-weight: 600; text-decoration: underline; }
+.back-link { font-size: 0.8rem; color: #2563eb; cursor: pointer; margin-bottom: 10px; font-weight: 600; }
+.block { display: block; }
+.text-center { text-align: center; }
+
+/* Forms */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.span-2 { grid-column: span 2; }
+.form-group label { display: block; font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 4px; text-transform: uppercase; }
+.form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; }
+.subtitle-alert { color: #b91c1c; font-size: 0.75rem; font-weight: 600; margin-bottom: 12px; }
+
+/* Buttons */
+.btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; text-decoration: none; }
+.btn-primary { background: #2563eb; color: #ffffff; }
+.btn-secondary { background: #e2e8f0; color: #1e293b; }
+
+/* Dynamic Match & Settle Buttons */
+.btn-settle { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; font-size: 0.8rem; padding: 8px; }
+.btn-settle:active { background-color: #dc2626; color: #ffffff; }
+
+.btn-match { background-color: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; font-size: 0.8rem; padding: 8px; }
+.btn-match:active { background-color: #2563eb; color: #ffffff; }
+
+.btn-matched-done { background-color: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; font-size: 0.8rem; padding: 8px; cursor: not-allowed; }
+
+/* Status Badges */
+.badge-matched { background-color: #dcfce7; color: #166534; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+.badge-open { background-color: #f1f5f9; color: #64748b; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+
+/* Header & Navigation */
+.app-header { background: #1e293b; color: #ffffff; padding: 12px 15px; }
+.user-badge-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; }
+.badge-label { display: block; color: #94a3b8; font-size: 0.65rem; font-weight: 700; }
+.text-locked { color: #38bdf8; }
+.btn-logout { background: #334155; color: #ffffff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; }
+
+.nav-tabs-wrapper { background: #0f172a; overflow-x: auto; }
+.nav-tabs { display: flex; padding: 5px; }
+.tab-btn { background: none; border: none; color: #94a3b8; padding: 10px 15px; font-weight: 600; font-size: 0.85rem; white-space: nowrap; cursor: pointer; }
+.tab-btn.active { color: #ffffff; border-bottom: 2px solid #38bdf8; }
+
+/* Feed Listings */
+.dashboard-main { padding: 15px; }
+.order-feed { display: flex; flex-direction: column; gap: 12px; }
+.feed-card { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; }
+.feed-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 8px; }
+.user-id-tag { font-weight: 700; font-size: 0.8rem; color: #334155; }
+.btn-link { background: none; border: none; color: #2563eb; font-weight: 600; font-size: 0.75rem; cursor: pointer; }
+
+.feed-row { font-size: 0.85rem; margin-bottom: 4px; }
+.feed-row .label { color: #64748b; font-size: 0.75rem; margin-right: 4px; }
+
+/* Contact Modal */
+.modal { border: none; border-radius: 12px; padding: 0; margin: auto; max-width: 380px; width: 90%; }
+.modal-content { padding: 20px; background: #ffffff; }
+.details-grid p { margin-bottom: 8px; font-size: 0.9rem; }
+.phone-link { color: #2563eb; font-weight: 700; text-decoration: none; }

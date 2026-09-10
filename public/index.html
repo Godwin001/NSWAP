@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>P2P Exchange Network</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Entry Gateway -->
+    <div id="auth-screen" class="screen">
+      <div class="card">
+        <div class="auth-tabs">
+          <button id="tab-login-btn" class="auth-tab active" onclick="showAuthMode('login')">Log In</button>
+          <button id="tab-initiation-btn" class="auth-tab" onclick="showAuthMode('initiation')">New Member Initiation</button>
+        </div>
+
+        <!-- FORM 1: Existing Member Login -->
+        <div id="login-form-box">
+          <h2>Member Login</h2>
+          <p class="desc">Enter your State Code and Full Name to access your state exchanges.</p>
+          <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label for="login-code">State Code</label>
+              <input type="text" id="login-code" placeholder="e.g. RV/25A/1234" required />
+            </div>
+            <div class="form-group mt-10">
+              <label for="login-name">Full Name</label>
+              <input type="text" id="login-name" placeholder="John Doe" required />
+            </div>
+            <button type="submit" class="btn btn-primary mt-15">Access NSWAP</button>
+          </form>
+        </div>
+
+        <!-- STEP 1: Initiation & Payment Instructions -->
+        <div id="initiation-step-box" class="hidden">
+          <h2>Membership Initiation</h2>
+          <p class="subtitle-alert">⚠️ Access requires account initiation and identity confirmation.</p>
+          
+          <div class="payment-instructions-box">
+            <div class="payment-status-badge">Payment Gateway Pending</div>
+            <p class="payment-desc">
+              Complete your membership fee transfer using the email instructions sent to you, or proceed via manual confirmation below until our direct Paystack link goes live.
+            </p>
+
+            <div class="payment-details-card">
+              <div class="pay-row">
+                <span>Initiation Fee:</span>
+                <strong>₦2,000 / One-time</strong>
+              </div>
+              <div class="pay-row">
+                <span>Support Email:</span>
+                <a href="mailto:access@p2pexchange.com?subject=Payment%20Verification%20Request" class="email-link">access@p2pexchange.com</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="initiation-actions mt-15">
+            <button type="button" class="btn btn-primary" onclick="proceedToRegistration()">
+              I Have Made Payment / Complete Registration ➔
+            </button>
+            <a href="mailto:access@p2pexchange.com?subject=Payment%20Proof" class="btn btn-secondary mt-10 text-center block">
+              ✉️ Email Payment Proof
+            </a>
+          </div>
+        </div>
+
+        <!-- STEP 2: Registration Form -->
+        <div id="register-form-box" class="hidden">
+          <div class="back-link" onclick="showAuthMode('initiation')">← Back to Payment Instructions</div>
+          <h2>Choose Location & Register</h2>
+          <p class="subtitle-alert">Make Sure you choose your state of deployment</p>
+
+          <form onsubmit="handleRegister(event)">
+            <div class="form-grid">
+              <div class="form-group span-2">
+                <label for="reg-state">Select State / FCT</label>
+                <select id="reg-state" required>
+                  <option value="">-- Choose Location --</option>
+                </select>
+              </div>
+              <div class="form-group span-2">
+                <label for="reg-code">Input your State Code</label>
+                <input type="text" id="reg-code" placeholder="e.g. NG-9021" required />
+              </div>
+              <div class="form-group span-2">
+                <label for="reg-name">Full Name</label>
+                <input type="text" id="reg-name" placeholder="John Doe" required />
+              </div>
+              <div class="form-group">
+                <label for="reg-sex">Sex</label>
+                <select id="reg-sex" required>
+                  <option value="">-- Select --</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="reg-phone">Phone Number</label>
+                <input type="tel" id="reg-phone" placeholder="08012345678" required />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-15">Finalize Registration</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="main-app" class="hidden">
+      <header class="app-header">
+        <div class="user-badge-row">
+          <div>
+            <span class="badge-label">STATE CODE</span>
+            <strong id="active-user-code">---</strong>
+          </div>
+          <div>
+            <span class="badge-label">CURRENT STATE OF DEPLOYMENT</span>
+            <strong id="active-locked-state" class="text-locked">---</strong>
+          </div>
+          <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+      </header>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs-wrapper">
+        <div class="nav-tabs">
+          <button class="tab-btn active" onclick="switchPage('currency', event)">JUNGLE BOOTS</button>
+          <button class="tab-btn" onclick="switchPage('crypto', event)">WHITE CANVAS</button>
+          <button class="tab-btn" onclick="switchPage('goods', event)">KHAKI SHIRT</button>
+          <button class="tab-btn" onclick="switchPage('services', event)">KHAKI TROUSERS</button>
+        </div>
+      </nav>
+      <!-- these navigations uses a label for the backend differnt from what is represented here-->
+        <!--currency', event)">JUNGLE BOOTS
+            ('crypto', event)">WHITR CANVAS
+            ('goods', event)">KHAKI SHIRT
+            ('services', event)">KHAKI TROUSERS
+                                             -->
+
+      <main class="dashboard-main">
+        <!-- Create Listing Form -->
+        <div class="card card-post mb-20">
+          <h3 id="post-form-title">POST ITEMS YOU WANT TO SWAP</h3>
+          <div class="form-grid">
+            <div class="form-group span-2">
+              <label id="lbl-have">I HAVE</label>
+              <input type="text" id="post-have" placeholder="Enter details..." />
+            </div>
+            <div class="form-group span-2">
+              <label id="lbl-need">I NEED</label>
+              <input type="text" id="post-need" placeholder="Enter details..." />
+            </div>
+          </div>
+          <button class="btn btn-primary mt-15" onclick="submitExchangeListing()">Publish Listing</button>
+        </div>
+
+        <!-- Orders Feed -->
+        <div class="order-feed-container">
+          <h2 id="page-title">Active Listings</h2>
+          <div id="order-feed" class="order-feed"></div>
+        </div>
+      </main>
+
+      <!-- User Contact Modal -->
+      <dialog id="user-modal" class="modal">
+        <div class="modal-content">
+          <h3>PCMs Contact Details</h3>
+          <hr />
+          <div class="details-grid">
+            <p><strong>STATE CODE:</strong> <span id="view-code"></span></p>
+            <p><strong>Name:</strong> <span id="view-name"></span></p>
+            <p><strong>Sex:</strong> <span id="view-sex"></span></p>
+            <p><strong>Phone:</strong> <a id="view-phone-link" href="#" class="phone-link"><span id="view-phone"></span></a></p>
+            <p><strong>State:</strong> <span id="view-cat"></span></p>
+          </div>
+          <button class="btn btn-secondary mt-15" onclick="closeUserModal()">Close</button>
+        </div>
+      </dialog>
+    </div>
+  </div>
+
+  <script>
+    let activeUser = null;
+    let currentPage = 'currency';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadCategories();
+      checkExistingSession();
+    });
+
+    function checkExistingSession() {
+      const stored = sessionStorage.getItem('p2p_active_user');
+      if (stored) {
+        activeUser = JSON.parse(stored);
+        displayMainApp();
+      }
+    }
+
+    async function loadCategories() {
+      try {
+        const res = await fetch('/api/categories');
+        const data = await res.json();
+        if (data.success) {
+          const regSelect = document.getElementById('reg-state');
+          regSelect.innerHTML = '<option value="">-- Choose Location --</option>';
+          data.categories.forEach(cat => {
+            regSelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+          });
+        }
+      } catch (err) {
+        console.error("Error loading states:", err);
+      }
+    }
+
+    function showAuthMode(mode) {
+      document.getElementById('login-form-box').classList.add('hidden');
+      document.getElementById('initiation-step-box').classList.add('hidden');
+      document.getElementById('register-form-box').classList.add('hidden');
+
+      if (mode === 'login') {
+        document.getElementById('tab-login-btn').classList.add('active');
+        document.getElementById('tab-initiation-btn').classList.remove('active');
+        document.getElementById('login-form-box').classList.remove('hidden');
+      } else if (mode === 'initiation') {
+        document.getElementById('tab-initiation-btn').classList.add('active');
+        document.getElementById('tab-login-btn').classList.remove('active');
+        document.getElementById('initiation-step-box').classList.remove('hidden');
+      }
+    }
+
+    function proceedToRegistration() {
+      document.getElementById('initiation-step-box').classList.add('hidden');
+      document.getElementById('register-form-box').classList.remove('hidden');
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const code = document.getElementById('login-code').value.trim();
+      const name = document.getElementById('login-name').value.trim();
+
+      const res = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, name })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        activeUser = data.user;
+        sessionStorage.setItem('p2p_active_user', JSON.stringify(activeUser));
+        displayMainApp();
+      } else {
+        alert(data.message);
+      }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const payload = {
+        code: document.getElementById('reg-code').value.trim(),
+        name: document.getElementById('reg-name').value.trim(),
+        sex: document.getElementById('reg-sex').value,
+        phone: document.getElementById('reg-phone').value.trim(),
+        category_id: parseInt(document.getElementById('reg-state').value)
+      };
+
+      const res = await fetch('/api/users/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        activeUser = data.user;
+        sessionStorage.setItem('p2p_active_user', JSON.stringify(activeUser));
+        displayMainApp();
+      } else {
+        alert(data.message);
+      }
+    }
+
+    function displayMainApp() {
+      document.getElementById('active-user-code').innerText = activeUser.code || activeUser.identifier || '---';
+      document.getElementById('active-locked-state').innerText = activeUser.state_name || activeUser.state || '---';
+      document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('main-app').classList.remove('hidden');
+      loadPageData();
+    }
+
+    function logout() {
+      sessionStorage.removeItem('p2p_active_user');
+      activeUser = null;
+      document.getElementById('main-app').classList.add('hidden');
+      document.getElementById('auth-screen').classList.remove('hidden');
+      showAuthMode('login');
+    }
+
+    function switchPage(pageType, evt) {
+      currentPage = pageType;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      evt.target.classList.add('active');
+
+      if (pageType === 'currency') {
+        document.getElementById('lbl-have').innerText = 'SIZE OF YOUR JUNGLE BOOTS';
+        document.getElementById('lbl-need').innerText = 'SIZE OF JUNGLE BOOTS YOU WANT';
+      } else if (pageType === 'crypto') {
+        document.getElementById('lbl-have').innerText = 'SIZE OF YOUR WHITE CANVAS';
+        document.getElementById('lbl-need').innerText = 'SIZE OF WHITE CANVAS YOU WANT';
+      } else if (pageType === 'goods') {
+        document.getElementById('lbl-have').innerText = 'SIZE OF YOUR KHAKI SHIRT';
+        document.getElementById('lbl-need').innerText = 'SIZE OF KHAKI SHIRT YOU WANT';
+      } else if (pageType === 'services') {
+        document.getElementById('lbl-have').innerText = 'SIZE OF YOUR KHAKI TROUSER';
+        document.getElementById('lbl-need').innerText = 'SIZE OF KHAKI TROUSER YOU WANT';
+      }
+
+      loadPageData();
+    }
+
+    async function loadPageData() {
+      const stateLabel = activeUser.state_name || activeUser.state || '';
+      document.getElementById('page-title').innerText = `Items available in ${stateLabel}`;
+      
+      const res = await fetch(`/api/exchanges/${currentPage}/${activeUser.state_id}`);
+      const data = await res.json();
+      const feed = document.getElementById('order-feed');
+      feed.innerHTML = '';
+
+      if (!data.entries || data.entries.length === 0) {
+        feed.innerHTML = `<div class="empty-feed">No active listings.</div>`;
+        return;
+      }
+
+      const userCode = activeUser.code || activeUser.identifier;
+
+      data.entries.forEach(entry => {
+        const isOwner = entry.user_id === userCode;
+        const hasMatched = entry.matched_by_users && entry.matched_by_users.includes(userCode);
+
+        let actionButtonHtml = '';
+        if (isOwner) {
+          actionButtonHtml = `
+            <button class="btn btn-settle" onclick="markAsSettled(${entry.id})">
+              ✓ Mark as Settled (Delete)
+            </button>`;
+        } else if (hasMatched) {
+          actionButtonHtml = `
+            <button class="btn btn-matched-done" disabled>
+              ✔ You Marked Matched
+            </button>`;
+        } else {
+          actionButtonHtml = `
+            <button class="btn btn-match" onclick="markAsMatched(${entry.id})">
+              🤝 Mark Matched
+            </button>`;
+        }
+
+        const matchBadgeHtml = entry.match_count > 0 
+          ? `<span class="badge-matched">MATCHED (${entry.match_count})</span>`
+          : `<span class="badge-open">OPEN</span>`;
+
+        feed.innerHTML += `
+          <div class="feed-card">
+            <div class="feed-header">
+              <span class="user-id-tag">STATE CODE: ${entry.user_id}</span>
+              ${matchBadgeHtml}
+              <button class="btn-link" onclick="viewUser('${entry.user_id}')">Contact PCM ➔</button>
+            </div>
+            <div class="feed-body">
+              <div class="feed-row have"><span class="label">I HAVE:</span> <strong>${entry.have}</strong></div>
+              <div class="feed-row need"><span class="label">I NEED:</span> <strong>${entry.need}</strong></div>
+            </div>
+            <div class="feed-actions mt-10">
+              ${actionButtonHtml}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    async function submitExchangeListing() {
+      const have = document.getElementById('post-have').value.trim();
+      const need = document.getElementById('post-need').value.trim();
+      const userCode = activeUser.code || activeUser.identifier;
+
+      if (!have || !need) return alert('Please enter both listing details.');
+
+      const res = await fetch(`/api/exchanges/${currentPage}/${activeUser.state_id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userCode, have, need })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('post-have').value = '';
+        document.getElementById('post-need').value = '';
+        loadPageData();
+      } else {
+        alert(data.message);
+      }
+    }
+
+    async function markAsMatched(entryId) {
+      const userCode = activeUser.code || activeUser.identifier;
+      const res = await fetch(`/api/exchanges/${currentPage}/${entryId}/match`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userCode })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        loadPageData();
+      } else {
+        alert(data.message);
+      }
+    }
+
+    async function markAsSettled(entryId) {
+      if (!confirm('Are you sure this deal is settled? It will be permanently deleted.')) return;
+      const userCode = activeUser.code || activeUser.identifier;
+
+      const res = await fetch(`/api/exchanges/${currentPage}/${entryId}?user_id=${userCode}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        loadPageData();
+      } else {
+        alert(data.message);
+      }
+    }
+
+    async function viewUser(id) {
+  try {
+    const res = await fetch(`/api/users/details?id=${encodeURIComponent(id)}`);
+    const data = await res.json();
+    
+    if (data.success) {
+      const u = data.user;
+      document.getElementById('view-code').innerText = u.code || u.identifier || id;
+      document.getElementById('view-name').innerText = u.name || 'N/A';
+      document.getElementById('view-sex').innerText = u.sex || 'N/A';
+      document.getElementById('view-phone').innerText = u.phone || 'N/A';
+      document.getElementById('view-phone-link').href = `tel:${u.phone || ''}`;
+      document.getElementById('view-cat').innerText = u.state || 'N/A';
+
+      const modal = document.getElementById('user-modal');
+      if (modal && typeof modal.showModal === "function") {
+        modal.showModal();
+      } else {
+        alert(`Contact Info:\nCode: ${u.code}\nName: ${u.name}\nPhone: ${u.phone}`);
+      }
+    } else {
+      alert(data.message || 'Could not fetch user info.');
+    }
+  } catch (err) {
+    console.error("Error fetching user details:", err);
+    alert('Could not open user contact details.');
+  }
+}
+   
+    function closeUserModal() {
+      const modal = document.getElementById('user-modal');
+      if (modal && typeof modal.close === "function") {
+        modal.close();
+      } else {
+        modal.removeAttribute('open');
+      }
+    }
+  </script>
+</body>
+</html>
