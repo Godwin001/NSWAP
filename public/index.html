@@ -242,7 +242,7 @@
           <form onsubmit="handleLogin(event)">
             <div class="form-group">
               <label for="login-code">State Code</label>
-              <input type="text" id="login-code" placeholder="e.g. RC/26C/1234" required />
+              <input type="text" id="login-code" placeholder="e.g. RV/25C/1234" required />
             </div>
             <div class="form-group mt-10">
               <label for="login-name">Full Name</label>
@@ -267,7 +267,7 @@
               </div>
               <div class="form-group span-2">
                 <label for="reg-code">Your NYSC State Code</label>
-                <input type="text" id="reg-code" placeholder="e.g. RC/26C/1234" required />
+                <input type="text" id="reg-code" placeholder="e.g. RV/25C/1234" required />
               </div>
               <div class="form-group span-2">
                 <label for="reg-name">Full Name</label>
@@ -698,125 +698,30 @@
       if (data.success) { loadPageData(); } else { alert(data.message); }
     }
 
-    // ─── Unlock Contact — ₦500 via Paystack ─────────────────
+    // ─── Get Contact (Free) ──────────────────────────────────
     async function unlockContact(exchangeType, entryId, btn) {
-      const userCode = activeUser.code || activeUser.identifier;
-      let   email    = activeUser.email || '';
-
-      // Ask for email if not stored (older accounts)
-      if (!email) {
-        email = prompt(
-          'Enter your email address to process the ₦500 contact-unlock payment:'
-        );
-        if (!email || !email.includes('@')) {
-          alert('A valid email is required to unlock contact.');
-          return;
-        }
-        // Cache it for this session
-        activeUser.email = email;
-        sessionStorage.setItem('p2p_active_user', JSON.stringify(activeUser));
-      }
-
       const originalText = btn.innerText;
       btn.disabled  = true;
-      btn.innerText = 'Checking...';
+      btn.innerText = 'Loading...';
 
       try {
-        // ── Step 1: Ask backend to initialise (or confirm already unlocked) ──
-        const initRes  = await fetch('/api/payment/initialize', {
-          method:  'POST',
+        const res  = await fetch(`/api/contact/${exchangeType}/${entryId}`, {
+          method:      'GET',
           credentials: 'same-origin',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({
-            user_id:       userCode,
-            exchange_type: exchangeType,
-            entry_id:      entryId,
-            email:         email,
-          }),
         });
-        const initData = await initRes.json();
+        const data = await res.json();
 
-        if (!initData.success) {
-          alert(initData.message || 'Could not initialise payment.');
+        if (data.success && data.contact) {
+          openContactModal(data.contact);
+          btn.disabled  = false;
+          btn.innerText = '✅ View Contact';
+        } else {
+          alert(data.message || 'Could not load contact details.');
           btn.disabled  = false;
           btn.innerText = originalText;
-          return;
         }
-
-        // ── Already unlocked — show contact directly ───────────────────────
-        if (initData.contact) {
-          openContactModal(initData.contact);
-          btn.disabled  = false;
-          btn.innerText = '✅ View Contact Again';
-          return;
-        }
-
-        // ── New payment required ────────────────────────────────────────────
-        const reference = initData.reference;
-
-        if (typeof PaystackPop === 'undefined') {
-          alert('Payment system is loading. Please wait a moment and try again.');
-          btn.disabled  = false;
-          btn.innerText = originalText;
-          return;
-        }
-
-        btn.innerText = 'Opening payment...';
-
-        const handler = PaystackPop.setup({
-          key:      PAYSTACK_PUBLIC_KEY,
-          email:    email,
-          amount:   50000,       // ₦500 in kobo
-          currency: 'NGN',
-          ref:      reference,   // server-generated reference
-
-          callback: function(response) {
-            btn.innerText = 'Verifying payment...';
-
-            // ── Step 2: Ask backend to verify with Paystack ──────────────────
-            (async function() {
-              try {
-                const verRes  = await fetch('/api/payment/verify', {
-                  method:  'POST',
-                  credentials: 'same-origin',
-                  headers: { 'Content-Type': 'application/json' },
-                  body:    JSON.stringify({
-                    reference: response.reference,
-                    user_id:   userCode,
-                  }),
-                });
-                const verData = await verRes.json();
-
-                if (verData.success && verData.contact) {
-                  openContactModal(verData.contact);
-                  btn.disabled  = false;
-                  btn.innerText = '✅ View Contact Again';
-                } else {
-                  alert(verData.message || 'Payment verification failed. Contact support.');
-                  btn.disabled  = false;
-                  btn.innerText = originalText;
-                }
-              } catch (err) {
-                alert('Network error during verification. Please try again or contact support.');
-                btn.disabled  = false;
-                btn.innerText = originalText;
-              }
-            })();
-          },
-
-          onClose: function() {
-            btn.disabled  = false;
-            btn.innerText = originalText;
-            // Silently cancelled — no alert needed
-          },
-        });
-
-        handler.openIframe();
-        btn.disabled  = false;   // re-enable so user can re-open if they close
-        btn.innerText = originalText;
-
       } catch (err) {
-        alert('Error: ' + err.message);
+        alert('Network error. Please try again.');
         btn.disabled  = false;
         btn.innerText = originalText;
       }

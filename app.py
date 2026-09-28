@@ -264,12 +264,6 @@ def get_categories():
     })
 
 
-@app.route('/api/nuke-db', methods=['GET'])
-def nuke_db():
-    db.session.execute(text('TRUNCATE TABLE users CASCADE;'))
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'DATABASE WIPED SUCCESSFULLY. You can now test from scratch.'})
-
 
 @app.route('/api/users/register', methods=['POST'])
 @limiter.limit("3 per minute")
@@ -542,32 +536,23 @@ def get_user(user_id):
 
 
 # ---------------------------------------------------------
-# 8. Routes — Contact Unlock / Payment
+# 8. Routes — Contact Unlock (FREE — Paystack keys pending)
 # ---------------------------------------------------------
 
 @app.route('/api/payment/initialize', methods=['POST'])
 @login_required
 def initialize_payment():
     """
-    Initialize a ₦500 Paystack transaction to unlock a specific listing's contact.
-
-    If the user has already paid for this listing → returns contact directly.
-    Otherwise  → creates a Paystack transaction and returns the reference.
-
-    IMPORTANT: secret key used server-side only; never sent to the browser.
+    Temporarily free — returns contact immediately without payment.
+    Paystack live keys will be wired in once released.
     """
     data          = request.json or {}
     requester_id  = session.get('user_id')
     exchange_type = data.get('exchange_type', '').strip()
     entry_id      = data.get('entry_id')
-    email         = data.get('email', '').strip()
 
     if not all([requester_id, exchange_type, entry_id]):
         return jsonify({'success': False, 'message': 'Missing required fields.'}), 400
-
-    requester = User.query.get(requester_id)
-    if not requester:
-        return jsonify({'success': False, 'message': 'User not found.'}), 404
 
     model = EXCHANGE_MODELS.get(exchange_type)
     if not model:
@@ -579,196 +564,32 @@ def initialize_payment():
 
     if entry.user_id == requester_id:
         return jsonify({'success': False,
-                        'message': 'You cannot unlock your own listing.'}), 400
+                        'message': 'You cannot view your own listing contact.'}), 400
 
-    # ── Already unlocked? Return contact immediately (no new charge) ──────────
-    existing = ContactUnlock.query.filter_by(
-        requester_id  = requester_id,
-        exchange_type = exchange_type,
-        entry_id      = entry_id,
-        status        = 'success',
-    ).first()
-    if existing:
-        return _contact_json(existing)
+    owner = User.query.get(entry.user_id)
+    if not owner:
+        return jsonify({'success': False, 'message': 'Listing owner not found.'}), 404
 
-    # ── Need email for Paystack ───────────────────────────────────────────────
-    if not email:
-        email = requester.email or ''
-    if not email:
-        return jsonify({
-            'success':    False,
-            'need_email': True,
-            'message':    'Email address required for payment processing.',
-        }), 400
+    cat = Category.query.get(owner.category_id)
 
-    # Save email to user record if not stored yet (helps future unlocks)
-    if not requester.email:
-        requester.email = email
-        db.session.commit()
+    # Build a dummy unlock record so the existing _contact_json helper works
+    class _FakeUnlock:
+        exchange_type = data.get('exchange_type', '')
+        entry_id      = data.get('entry_id')
 
-    if not PAYSTACK_SECRET_KEY:
-        return jsonify({'success': False,
-                        'message': 'Payment system not configured. Contact support.'}), 500
-
-    # ── Create Paystack transaction via backend ───────────────────────────────
-    ts        = int(datetime.now(timezone.utc).timestamp() * 1000)
-    # Paystack only allows alphanumeric + hyphens in references.
-    # NYSC state codes contain '/' so we strip all non-alphanumeric chars first.
-    safe_id   = re.sub(r'[^A-Za-z0-9]', '', requester_id)
-    reference = f'NSWAP-{safe_id}-{exchange_type}-{entry_id}-{ts}'
-
-    try:
-        resp = http_requests.post(
-            'https://api.paystack.co/transaction/initialize',
-            headers={
-                'Authorization': f'Bearer {PAYSTACK_SECRET_KEY}',
-                'Content-Type':  'application/json',
-            },
-            json={
-                'email':     email,
-                'amount':    50000,      # ₦500 in kobo
-                'reference': reference,
-                'currency':  'NGN',
-                'metadata':  {
-                    'requester_id':  requester_id,
-                    'exchange_type': exchange_type,
-                    'entry_id':      entry_id,
-                    'custom_fields': [
-                        {'display_name': 'Requester',     'variable_name': 'requester_id',  'value': requester_id},
-                        {'display_name': 'Exchange Type', 'variable_name': 'exchange_type', 'value': exchange_type},
-                        {'display_name': 'Entry ID',      'variable_name': 'entry_id',      'value': str(entry_id)},
-                    ],
-                },
-            },
-            timeout=10,
-        )
-        ps = resp.json()
-    except Exception as exc:
-        return jsonify({'success': False, 'message': f'Payment service error: {exc}'}), 503
-
-    if not ps.get('status'):
-        return jsonify({'success': False,
-                        'message': ps.get('message', 'Payment initialization failed.')}), 400
-
-    # ── Store pending record ──────────────────────────────────────────────────
-    unlock = ContactUnlock(
-        requester_id       = requester_id,
-        exchange_type      = exchange_type,
-        entry_id           = entry_id,
-        paystack_reference = reference,
-        status             = 'pending',
-        amount             = 50000,
-    )
-    db.session.add(unlock)
-    db.session.commit()
-
-    return jsonify({
-        'success':         True,
-        'already_unlocked': False,
-        'reference':       reference,
-    })
+    return _contact_json(_FakeUnlock())
 
 
 @app.route('/api/payment/verify', methods=['POST'])
 @login_required
 def verify_payment():
-    """
-    Verify a Paystack payment server-side and grant contact unlock if successful.
-    Frontend must call this after Paystack callback fires.
-    Backend re-verifies directly with Paystack — never trusts the frontend.
-    """
-    data         = request.json or {}
-    reference    = data.get('reference', '').strip()
-    requester_id = session.get('user_id')
-
-    if not reference or not requester_id:
-        return jsonify({'success': False,
-                        'message': 'reference and user_id are required.'}), 400
-
-    unlock = ContactUnlock.query.filter_by(
-        paystack_reference = reference,
-        requester_id       = requester_id,
-    ).first()
-
-    if not unlock:
-        return jsonify({'success': False, 'message': 'Payment record not found.'}), 404
-
-    # Already verified (idempotent)
-    if unlock.status == 'success':
-        return _contact_json(unlock)
-
-    if not PAYSTACK_SECRET_KEY:
-        return jsonify({'success': False,
-                        'message': 'Payment system not configured.'}), 500
-
-    # ── Ask Paystack to confirm ───────────────────────────────────────────────
-    try:
-        safe_ref = urllib.parse.quote(reference, safe='')
-        resp     = http_requests.get(
-            f'https://api.paystack.co/transaction/verify/{safe_ref}',
-            headers={'Authorization': f'Bearer {PAYSTACK_SECRET_KEY}'},
-            timeout=10,
-        )
-        ps = resp.json()
-    except Exception as exc:
-        return jsonify({'success': False,
-                        'message': f'Verification service error: {exc}'}), 503
-
-    if not ps.get('status'):
-        return jsonify({'success': False, 'message': 'Verification call failed.'}), 400
-
-    txn = ps.get('data', {})
-
-    if txn.get('status') != 'success':
-        unlock.status = 'failed'
-        db.session.commit()
-        return jsonify({'success': False,
-                        'message': f'Payment not successful (status: {txn.get("status")}).'}), 400
-
-    if txn.get('amount', 0) < 50000:
-        unlock.status = 'failed'
-        db.session.commit()
-        return jsonify({'success': False, 'message': 'Payment amount insufficient.'}), 400
-
-    # ── Grant unlock ──────────────────────────────────────────────────────────
-    unlock.status  = 'success'
-    unlock.paid_at = datetime.now(timezone.utc)
-    db.session.commit()
-
-    return _contact_json(unlock)
+    """Kept for compatibility — immediately returns success (free mode)."""
+    return jsonify({'success': True, 'message': 'Free mode active.'}), 200
 
 
 @app.route('/api/payment/webhook', methods=['POST'])
 def paystack_webhook():
-    """
-    Paystack webhook endpoint for async charge.success events.
-    Verifies HMAC-SHA512 signature before processing.
-    Idempotent: safe to receive the same event multiple times.
-    """
-    body      = request.get_data()
-    signature = request.headers.get('x-paystack-signature', '')
-
-    # Verify signature
-    if PAYSTACK_SECRET_KEY:
-        expected = hmac.new(
-            PAYSTACK_SECRET_KEY.encode('utf-8'),
-            body,
-            hashlib.sha512,
-        ).hexdigest()
-        if not hmac.compare_digest(expected, signature):
-            return jsonify({'status': 'invalid signature'}), 400
-
-    event = request.json or {}
-    if event.get('event') == 'charge.success':
-        txn       = event.get('data', {})
-        reference = txn.get('reference', '')
-        unlock    = ContactUnlock.query.filter_by(paystack_reference=reference).first()
-        if unlock and unlock.status == 'pending':
-            if txn.get('status') == 'success' and txn.get('amount', 0) >= 50000:
-                unlock.status  = 'success'
-                unlock.paid_at = datetime.now(timezone.utc)
-                db.session.commit()
-
+    """Kept for compatibility — no-op in free mode."""
     return jsonify({'status': 'ok'}), 200
 
 
@@ -776,33 +597,39 @@ def paystack_webhook():
 @login_required
 def get_contact_direct(exchange_type, entry_id):
     """
-    Protected contact endpoint.
-    Returns phone only if requester has a verified (status=success) ContactUnlock
-    for this specific listing. All other cases → 403.
+    Free contact endpoint — returns owner details to any logged-in user
+    who did not create the listing themselves.
     """
     requester_id = session.get('user_id')
-    if not requester_id:
-        return jsonify({
-            'success': False,
-            'locked':  True,
-            'message': 'Authentication required.',
-        }), 401
 
-    unlock = ContactUnlock.query.filter_by(
-        requester_id  = requester_id,
-        exchange_type = exchange_type,
-        entry_id      = entry_id,
-        status        = 'success',
-    ).first()
+    model = EXCHANGE_MODELS.get(exchange_type)
+    if not model:
+        return jsonify({'success': False, 'message': 'Invalid exchange type.'}), 400
 
-    if not unlock:
-        return jsonify({
-            'success': False,
-            'locked':  True,
-            'message': 'Contact locked. Complete ₦500 payment to unlock.',
-        }), 403
+    entry = model.query.get(entry_id)
+    if not entry:
+        return jsonify({'success': False, 'message': 'Listing not found.'}), 404
 
-    return _contact_json(unlock)
+    if entry.user_id == requester_id:
+        return jsonify({'success': False,
+                        'message': 'This is your own listing.'}), 400
+
+    owner = User.query.get(entry.user_id)
+    if not owner:
+        return jsonify({'success': False, 'message': 'Owner not found.'}), 404
+
+    cat = Category.query.get(owner.category_id)
+    return jsonify({
+        'success': True,
+        'contact': {
+            'code':  owner.identifier,
+            'name':  owner.name,
+            'sex':   owner.sex,
+            'phone': owner.phone,
+            'email': owner.email or 'No email provided',
+            'state': cat.category_name if cat else 'N/A',
+        }
+    })
 
 
 # ---------------------------------------------------------
