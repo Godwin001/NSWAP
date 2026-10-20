@@ -3,29 +3,246 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>P2P Exchange Network</title>
+  <title>NSWAP — NYSC Swap Platform</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://js.paystack.co/v1/inline.js"></script>
 </head>
 <body>
 
   <div class="app-container">
-    
-    <!-- Entry Gateway -->
-    <div id="auth-screen" class="screen">
+
+    <!-- ══════════════════════════════════════════════════════
+         LANDING PAGE
+    ══════════════════════════════════════════════════════ -->
+    <div id="landing-page" class="landing-screen hidden">
+
+      <!-- NAVBAR -->
+      <nav class="lp-nav">
+        <div class="lp-nav-inner">
+          <div class="lp-logo">NSWAP<span class="lp-logo-dot">.</span></div>
+          <div class="lp-nav-links">
+            <a href="#lp-how" class="lp-nav-link" onclick="document.getElementById('lp-how').scrollIntoView({behavior:'smooth'});return false;">How It Works</a>
+            <a href="#lp-trust" class="lp-nav-link" onclick="document.getElementById('lp-trust').scrollIntoView({behavior:'smooth'});return false;">Safety</a>
+            <button onclick="showAuthMode('login')" class="lp-btn-ghost">Log In</button>
+            <button onclick="showAuthMode('initiation')" class="lp-btn-cta">Get Started — Free</button>
+          </div>
+          <button class="lp-hamburger" onclick="toggleMobileMenu()" aria-label="Open menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+        <div id="lp-mobile-menu" class="lp-mobile-menu hidden">
+          <button class="lp-mobile-link" onclick="document.getElementById('lp-how').scrollIntoView({behavior:'smooth'});closeMobileMenu()">How It Works</button>
+          <button class="lp-mobile-link" onclick="document.getElementById('lp-trust').scrollIntoView({behavior:'smooth'});closeMobileMenu()">Safety</button>
+          <button onclick="showAuthMode('login')" class="lp-mobile-link">Log In</button>
+          <button onclick="showAuthMode('initiation')" class="lp-btn-cta lp-mobile-cta">Get Started — Free</button>
+        </div>
+      </nav>
+
+      <!-- HERO SECTION -->
+      <section class="lp-hero">
+        <div class="lp-hero-content">
+          <div class="lp-hero-badge">&#127894; Built for NYSC Corps Members</div>
+          <h1 class="lp-h1">Find the Corps Member<br>With the Size You Need.</h1>
+          <p class="lp-hero-sub">Got jungle boots that don't fit? Khaki shirt too big? NSWAP connects you with other corps members in your deployment state so you can find exactly who has the size you need &mdash; and swap.</p>
+          <div class="lp-hero-btns">
+            <button onclick="showAuthMode('initiation')" class="lp-btn-cta lp-btn-lg">Create Free Account</button>
+            <button onclick="showAuthMode('login')" class="lp-btn-ghost lp-btn-lg">Log In to Dashboard</button>
+          </div>
+          <p class="lp-hero-note">&#10003; Free to join &nbsp;&middot;&nbsp; &#10003; State-specific listings &nbsp;&middot;&nbsp; &#8358;500 to unlock a contact</p>
+        </div>
+        <div class="lp-hero-visual" aria-hidden="true">
+          <div class="lp-vis-card lp-vis-card-top">
+            <div class="lp-vis-tag lp-tag-have">I HAVE</div>
+            <div class="lp-vis-val">Jungle Boots &mdash; Size 44</div>
+            <div class="lp-vis-tag lp-tag-need lp-mt8">I NEED</div>
+            <div class="lp-vis-val">Jungle Boots &mdash; Size 42</div>
+          </div>
+          <div class="lp-vis-swap">&#8644; MATCH</div>
+          <div class="lp-vis-card lp-vis-card-bot">
+            <div class="lp-vis-tag lp-tag-have">I HAVE</div>
+            <div class="lp-vis-val">Jungle Boots &mdash; Size 42</div>
+            <div class="lp-vis-tag lp-tag-need lp-mt8">I NEED</div>
+            <div class="lp-vis-val">Jungle Boots &mdash; Size 44</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROBLEM / SOLUTION -->
+      <section class="lp-problem">
+        <div class="lp-section-wrap">
+          <div class="lp-prob-text">
+            <div class="lp-tag">The Problem</div>
+            <h2>Camp Issued You the Wrong Size. Now What?</h2>
+            <p>At NYSC orientation camps, kit items &mdash; jungle boots, white canvas, khaki shirts and trousers &mdash; are distributed in bulk. Many corps members end up with sizes that simply don't fit.</p>
+            <p>Searching randomly wastes time. NSWAP gives you a structured, state-specific platform to find the exact person who has what you need &mdash; and needs what you have.</p>
+          </div>
+          <div class="lp-prob-cards">
+            <div class="lp-prob-card lp-prob-bad">
+              <div class="lp-prob-icon">&#10007;</div>
+              <p><strong>Without NSWAP</strong></p>
+              <p>Random searching. Wasted time. Wrong sizes. Frustration.</p>
+            </div>
+            <div class="lp-prob-card lp-prob-good">
+              <div class="lp-prob-icon">&#10003;</div>
+              <p><strong>With NSWAP</strong></p>
+              <p>Browse listings. Find your exact match. Connect and swap comfortably.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOW IT WORKS -->
+      <section class="lp-how" id="lp-how">
+        <div class="lp-section-wrap lp-how-wrap">
+          <div class="lp-tag lp-center">How It Works</div>
+          <h2 class="lp-center">Four Simple Steps to a Perfect Swap</h2>
+          <div class="lp-steps">
+            <div class="lp-step">
+              <div class="lp-step-num">01</div>
+              <h3>Browse Listings</h3>
+              <p>Log in and see all active swap listings from corps members in your same deployment state.</p>
+            </div>
+            <div class="lp-step-arr">&#8594;</div>
+            <div class="lp-step">
+              <div class="lp-step-num">02</div>
+              <h3>Find Your Match</h3>
+              <p>Find someone whose "I HAVE" matches your "I NEED" and vice versa. Mark them as matched.</p>
+            </div>
+            <div class="lp-step-arr">&#8594;</div>
+            <div class="lp-step">
+              <div class="lp-step-num">03</div>
+              <h3>Unlock Contact</h3>
+              <p>Pay a one-time &#8358;500 fee to reveal the corps member's phone number and contact details.</p>
+            </div>
+            <div class="lp-step-arr">&#8594;</div>
+            <div class="lp-step">
+              <div class="lp-step-num">04</div>
+              <h3>Swap In Person</h3>
+              <p>Call them directly. Agree on a time and place. Inspect items and complete the physical exchange.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LISTING EXPLANATION -->
+      <section class="lp-listing">
+        <div class="lp-section-wrap lp-listing-wrap">
+          <div class="lp-listing-text">
+            <div class="lp-tag">How Listings Work</div>
+            <h2>Post What You Have.<br>State What You Need.</h2>
+            <p>Every NSWAP listing is a simple two-part statement. You state exactly what item and size you currently have, and the size you actually need. This makes matching fast, clear, and accurate.</p>
+            <p>Listings are only visible to corps members in the same deployment state, keeping results relevant and local.</p>
+          </div>
+          <div class="lp-listing-cards">
+            <div class="lp-list-ex">
+              <div class="lp-list-row">
+                <span class="lp-list-badge lp-have-badge">I HAVE</span>
+                <span class="lp-list-val">Khaki Trouser &mdash; Size 34</span>
+              </div>
+              <div class="lp-list-row lp-mt6">
+                <span class="lp-list-badge lp-need-badge">I NEED</span>
+                <span class="lp-list-val">Khaki Trouser &mdash; Size 32</span>
+              </div>
+            </div>
+            <div class="lp-list-ex lp-list-ex-2">
+              <div class="lp-list-row">
+                <span class="lp-list-badge lp-have-badge">I HAVE</span>
+                <span class="lp-list-val">White Canvas &mdash; Size 42</span>
+              </div>
+              <div class="lp-list-row lp-mt6">
+                <span class="lp-list-badge lp-need-badge">I NEED</span>
+                <span class="lp-list-val">White Canvas &mdash; Size 40</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TRUST / SAFETY -->
+      <section class="lp-trust" id="lp-trust">
+        <div class="lp-section-wrap">
+          <div class="lp-tag lp-tag-light lp-center">Safety First</div>
+          <h2 class="lp-center lp-trust-h2">NSWAP Connects You. You Handle the Swap.</h2>
+          <p class="lp-trust-sub lp-center">NSWAP is a discovery and connection platform. The physical exchange happens between corps members, face-to-face. Always inspect items before completing your swap.</p>
+          <div class="lp-trust-grid">
+            <div class="lp-trust-card">
+              <div class="lp-trust-ico">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <h3>Registered Members Only</h3>
+              <p>Only corps members with valid NYSC state codes can register and post listings.</p>
+            </div>
+            <div class="lp-trust-card">
+              <div class="lp-trust-ico">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <h3>State-Based Results</h3>
+              <p>Listings are scoped to your deployment state. You only see corps members nearby.</p>
+            </div>
+            <div class="lp-trust-card">
+              <div class="lp-trust-ico">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-7.33 7.33a3 3 0 0 0 0 4.24 3 3 0 0 0 4.24 0l3.21-3.21"/><path d="m14 14-1.9-1.9a1 1 0 1 0-3 3l-2.6 2.6a1 1 0 1 0 3 3l2.6-2.6"/><path d="M16 16l-3-3"/></svg>
+              </div>
+              <h3>You Control the Exchange</h3>
+              <p>You arrange and complete the in-person swap. Inspect everything before you exchange.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINAL CTA -->
+      <section class="lp-final-cta">
+        <div class="lp-section-wrap lp-center">
+          <h2>Ready to Find Your Match?</h2>
+          <p>Join corps members across Nigeria using NSWAP to swap items and settle into camp comfortably.</p>
+          <div class="lp-hero-btns lp-cta-gap">
+            <button onclick="showAuthMode('initiation')" class="lp-btn-cta lp-btn-lg">Create Free Account</button>
+            <button onclick="showAuthMode('login')" class="lp-btn-ghost-dark lp-btn-lg">Log In</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="lp-footer">
+        <div class="lp-footer-wrap">
+          <div class="lp-footer-brand">
+            <div class="lp-logo lp-logo-sm">NSWAP<span class="lp-logo-dot">.</span></div>
+            <p>The NYSC Corps Member Item Exchange Platform.</p>
+          </div>
+          <div class="lp-footer-links">
+            <button onclick="showAuthMode('initiation')" class="lp-footer-btn">Sign Up</button>
+            <button onclick="showAuthMode('login')" class="lp-footer-btn">Log In</button>
+          </div>
+        </div>
+        <div class="lp-footer-copy">&copy; 2026 NSWAP &middot; For NYSC Corps Members &middot; Physical exchange is arranged between corps members directly.</div>
+      </footer>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         AUTH SCREEN
+    ══════════════════════════════════════════════════════ -->
+    <div id="auth-screen" class="screen hidden">
+      <div style="margin-bottom: 15px; text-align: left;">
+        <button onclick="goBackFromAuth()" class="btn-link" style="font-size: 0.95rem; display: flex; align-items: center; gap: 5px; text-decoration: none;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          Back
+        </button>
+      </div>
       <div class="card">
         <div class="auth-tabs">
+          <button id="tab-initiation-btn" class="auth-tab" onclick="showAuthMode('initiation')">Sign Up</button>
           <button id="tab-login-btn" class="auth-tab active" onclick="showAuthMode('login')">Log In</button>
-          <button id="tab-initiation-btn" class="auth-tab" onclick="showAuthMode('initiation')">New Member Initiation</button>
         </div>
 
-        <!-- FORM 1: Existing Member Login -->
+        <!-- FORM: Existing Member Login -->
         <div id="login-form-box">
           <h2>Member Login</h2>
           <p class="desc">Enter your State Code and Full Name to access your state exchanges.</p>
           <form onsubmit="handleLogin(event)">
             <div class="form-group">
               <label for="login-code">State Code</label>
-              <input type="text" id="login-code" placeholder="e.g. RV/25A/1234" required />
+              <input type="text" id="login-code" placeholder="e.g. RV/25C/1234" required />
             </div>
             <div class="form-group mt-10">
               <label for="login-name">Full Name</label>
@@ -35,60 +252,30 @@
           </form>
         </div>
 
-        <!-- STEP 1: Initiation & Payment Instructions -->
-        <div id="initiation-step-box" class="hidden">
-          <h2>Membership Initiation</h2>
-          <p class="subtitle-alert">⚠️ Access requires account initiation and identity confirmation.</p>
-          
-          <div class="payment-instructions-box">
-            <div class="payment-status-badge">Payment Gateway Pending</div>
-            <p class="payment-desc">
-              Complete your membership fee transfer using the email instructions sent to you, or proceed via manual confirmation below until our direct Paystack link goes live.
-            </p>
-
-            <div class="payment-details-card">
-              <div class="pay-row">
-                <span>Initiation Fee:</span>
-                <strong>₦2,000 / One-time</strong>
-              </div>
-              <div class="pay-row">
-                <span>Support Email:</span>
-                <a href="mailto:access@p2pexchange.com?subject=Payment%20Verification%20Request" class="email-link">access@p2pexchange.com</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="initiation-actions mt-15">
-            <button type="button" class="btn btn-primary" onclick="proceedToRegistration()">
-              I Have Made Payment / Complete Registration ➔
-            </button>
-            <a href="mailto:access@p2pexchange.com?subject=Payment%20Proof" class="btn btn-secondary mt-10 text-center block">
-              ✉️ Email Payment Proof
-            </a>
-          </div>
-        </div>
-
-        <!-- STEP 2: Registration Form -->
+        <!-- FORM: New Member Registration (FREE — no payment required) -->
         <div id="register-form-box" class="hidden">
-          <div class="back-link" onclick="showAuthMode('initiation')">← Back to Payment Instructions</div>
-          <h2>Choose Location & Register</h2>
-          <p class="subtitle-alert">Make Sure you choose your state of deployment</p>
+          <h2>Create Your Account</h2>
+          <p class="desc">Registration is free. Fill in your NYSC details to get started.</p>
 
           <form onsubmit="handleRegister(event)">
             <div class="form-grid">
               <div class="form-group span-2">
-                <label for="reg-state">Select State / FCT</label>
+                <label for="reg-state">Choose State of Deployment</label>
                 <select id="reg-state" required>
-                  <option value="">-- Choose Location --</option>
+                  <option value="">-- Choose State of Deployment --</option>
                 </select>
               </div>
               <div class="form-group span-2">
-                <label for="reg-code">Input your State Code</label>
-                <input type="text" id="reg-code" placeholder="e.g. NG-9021" required />
+                <label for="reg-code">Your NYSC State Code</label>
+                <input type="text" id="reg-code" placeholder="e.g. RV/25C/1234" required />
               </div>
               <div class="form-group span-2">
                 <label for="reg-name">Full Name</label>
                 <input type="text" id="reg-name" placeholder="John Doe" required />
+              </div>
+              <div class="form-group span-2">
+                <label for="reg-email">Email Address</label>
+                <input type="email" id="reg-email" placeholder="yourname@email.com" required />
               </div>
               <div class="form-group">
                 <label for="reg-sex">Sex</label>
@@ -103,13 +290,19 @@
                 <input type="tel" id="reg-phone" placeholder="08012345678" required />
               </div>
             </div>
-            <button type="submit" class="btn btn-primary mt-15">Finalize Registration</button>
+            <button type="submit" class="btn btn-primary mt-15" id="reg-btn">
+              Complete Registration — Free
+            </button>
           </form>
         </div>
-      </div>
-    </div>
 
-    <!-- Main Dashboard -->
+      </div>
+    </div><!-- /auth-screen -->
+
+
+    <!-- ══════════════════════════════════════════════════════
+         MAIN DASHBOARD
+    ══════════════════════════════════════════════════════ -->
     <div id="main-app" class="hidden">
       <header class="app-header">
         <div class="user-badge-row">
@@ -121,7 +314,13 @@
             <span class="badge-label">CURRENT STATE OF DEPLOYMENT</span>
             <strong id="active-locked-state" class="text-locked">---</strong>
           </div>
-          <button class="btn-logout" onclick="logout()">Logout</button>
+          <div class="profile-dropdown-container">
+            <button class="btn-profile" onclick="toggleProfileMenu()">Account ▼</button>
+            <div id="profile-menu" class="profile-menu hidden">
+              <div class="profile-menu-header">My Profile</div>
+              <button class="menu-item" onclick="logout()">Sign Out</button>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -129,14 +328,14 @@
       <nav class="nav-tabs-wrapper">
         <div class="nav-tabs">
           <button class="tab-btn active" onclick="switchPage('currency', event)">JUNGLE BOOTS</button>
-          <button class="tab-btn" onclick="switchPage('crypto', event)">WHITE CANVAS</button>
-          <button class="tab-btn" onclick="switchPage('goods', event)">KHAKI SHIRT</button>
-          <button class="tab-btn" onclick="switchPage('services', event)">KHAKI TROUSERS</button>
+          <button class="tab-btn"        onclick="switchPage('crypto',   event)">WHITE CANVAS</button>
+          <button class="tab-btn"        onclick="switchPage('goods',    event)">KHAKI SHIRT</button>
+          <button class="tab-btn"        onclick="switchPage('services', event)">KHAKI TROUSERS</button>
         </div>
       </nav>
-      <!-- these navigations uses a label for the backend differnt from what is represented here-->
+      <!-- these navigations uses a label for the backend different from what is represented here-->
         <!--currency', event)">JUNGLE BOOTS
-            ('crypto', event)">WHITR CANVAS
+            ('crypto', event)">WHITE CANVAS
             ('goods', event)">KHAKI SHIRT
             ('services', event)">KHAKI TROUSERS
                                              -->
@@ -165,28 +364,47 @@
         </div>
       </main>
 
-      <!-- User Contact Modal -->
+      <!-- Contact Modal -->
       <dialog id="user-modal" class="modal">
         <div class="modal-content">
           <h3>PCMs Contact Details</h3>
           <hr />
           <div class="details-grid">
             <p><strong>STATE CODE:</strong> <span id="view-code"></span></p>
-            <p><strong>Name:</strong> <span id="view-name"></span></p>
-            <p><strong>Sex:</strong> <span id="view-sex"></span></p>
-            <p><strong>Phone:</strong> <a id="view-phone-link" href="#" class="phone-link"><span id="view-phone"></span></a></p>
+            <p><strong>Name:</strong>       <span id="view-name"></span></p>
+            <p><strong>Sex:</strong>        <span id="view-sex"></span></p>
+            <p><strong>Phone:</strong>
+              <a id="view-phone-link" href="#" class="phone-link">
+                <span id="view-phone"></span>
+              </a>
+            </p>
+            <p><strong>Email:</strong> <span id="view-email"></span></p>
             <p><strong>State:</strong> <span id="view-cat"></span></p>
+            
+            <a id="view-wa-link" href="#" target="_blank" class="btn btn-primary mt-15" style="display:flex; align-items:center; justify-content:center; gap:8px; background-color:#25D366; border-color:#25D366; text-decoration:none; margin-top: 15px;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="20" height="20" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zM223.9 413.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 334.1l-4.4-7.1c-18.4-29.6-28.1-63.9-28.1-99.1 0-103.7 84.4-188.1 188.1-188.1 55.1 0 106.9 21.5 145.8 60.5 39 39 60.5 90.8 60.5 145.8 0 103.8-84.4 188.2-188.2 188.2zm103.4-141.4c-5.7-2.8-33.6-16.6-38.8-18.5-5.2-1.9-9-2.8-12.8 2.8-3.8 5.7-14.7 18.5-18 22.2-3.3 3.8-6.6 4.3-12.3 1.4-5.7-2.8-24-8.8-45.7-28.2-16.9-15.1-28.3-33.7-31.6-39.4-3.3-5.7-.4-8.8 2.5-11.6 2.6-2.5 5.7-6.6 8.5-9.9 2.8-3.3 3.8-5.7 5.7-9.5 1.9-3.8.9-7.1-.5-9.9-1.4-2.8-12.8-30.9-17.5-42.3-4.6-11.1-9.3-9.6-12.8-9.8-3.3-.2-7.1-.2-10.9-.2-3.8 0-10 1.4-15.2 7.1-5.2 5.7-19.9 19.5-19.9 47.4s20.4 54.9 23.2 58.7c2.8 3.8 40 61.1 96.9 85.7 13.5 5.9 24.1 9.4 32.3 12 13.6 4.3 26.1 3.7 35.9 2.2 11.1-1.7 33.6-13.8 38.3-27.1 4.7-13.3 4.7-24.7 3.3-27.1-1.4-2.4-5.2-3.8-10.9-6.6z"/></svg>
+              Chat on WhatsApp
+            </a>
           </div>
           <button class="btn btn-secondary mt-15" onclick="closeUserModal()">Close</button>
         </div>
       </dialog>
-    </div>
-  </div>
+
+    </div><!-- /main-app -->
+  </div><!-- /app-container -->
+
 
   <script>
-    let activeUser = null;
-    let currentPage = 'currency';
+    // ─────────────────────────────────────────────────────────
+    // Paystack PUBLIC key — safe to be in frontend source.
+    // Secret key is only in Railway env vars, never here.
+    // ─────────────────────────────────────────────────────────
+    const PAYSTACK_PUBLIC_KEY = 'pk_test_2c5531973d75e047e252cfd95404bd832de703c1';
 
+    let activeUser   = null;
+    let currentPage  = 'currency';
+
+    // ─── Init ────────────────────────────────────────────────
     window.addEventListener('DOMContentLoaded', () => {
       loadCategories();
       checkExistingSession();
@@ -197,55 +415,62 @@
       if (stored) {
         activeUser = JSON.parse(stored);
         displayMainApp();
+      } else {
+        document.getElementById('landing-page').classList.remove('hidden');
       }
+    }
+
+    function toggleProfileMenu() {
+      const menu = document.getElementById('profile-menu');
+      menu.classList.toggle('hidden');
     }
 
     async function loadCategories() {
       try {
-        const res = await fetch('/api/categories');
+        const res  = await fetch('/api/categories');
         const data = await res.json();
         if (data.success) {
-          const regSelect = document.getElementById('reg-state');
-          regSelect.innerHTML = '<option value="">-- Choose Location --</option>';
+          const sel = document.getElementById('reg-state');
+          sel.innerHTML = '<option value="">-- Choose State of Deployment --</option>';
           data.categories.forEach(cat => {
-            regSelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+            sel.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
           });
         }
       } catch (err) {
-        console.error("Error loading states:", err);
+        console.error('Error loading states:', err);
       }
     }
 
+    // ─── Auth Tab Switching ──────────────────────────────────
     function showAuthMode(mode) {
+      document.getElementById('landing-page').classList.add('hidden');
+      document.getElementById('auth-screen').classList.remove('hidden');
       document.getElementById('login-form-box').classList.add('hidden');
-      document.getElementById('initiation-step-box').classList.add('hidden');
       document.getElementById('register-form-box').classList.add('hidden');
 
       if (mode === 'login') {
         document.getElementById('tab-login-btn').classList.add('active');
         document.getElementById('tab-initiation-btn').classList.remove('active');
         document.getElementById('login-form-box').classList.remove('hidden');
-      } else if (mode === 'initiation') {
+      } else {
+        // 'initiation' goes directly to the free registration form
         document.getElementById('tab-initiation-btn').classList.add('active');
         document.getElementById('tab-login-btn').classList.remove('active');
-        document.getElementById('initiation-step-box').classList.remove('hidden');
+        document.getElementById('register-form-box').classList.remove('hidden');
       }
     }
 
-    function proceedToRegistration() {
-      document.getElementById('initiation-step-box').classList.add('hidden');
-      document.getElementById('register-form-box').classList.remove('hidden');
-    }
-
+    // ─── Login ───────────────────────────────────────────────
     async function handleLogin(e) {
       e.preventDefault();
       const code = document.getElementById('login-code').value.trim();
       const name = document.getElementById('login-name').value.trim();
 
-      const res = await fetch('/api/users/login', {
-        method: 'POST',
+      const res  = await fetch('/api/users/login', {
+        method:  'POST',
+        credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, name })
+        body:    JSON.stringify({ code, name }),
       });
       const data = await res.json();
 
@@ -258,51 +483,78 @@
       }
     }
 
+    // ─── Register (FREE — no payment) ───────────────────────
     async function handleRegister(e) {
       e.preventDefault();
+
+      const btn = document.getElementById('reg-btn');
+      btn.disabled  = true;
+      btn.innerText = 'Registering...';
+
       const payload = {
-        code: document.getElementById('reg-code').value.trim(),
-        name: document.getElementById('reg-name').value.trim(),
-        sex: document.getElementById('reg-sex').value,
-        phone: document.getElementById('reg-phone').value.trim(),
-        category_id: parseInt(document.getElementById('reg-state').value)
+        code:        document.getElementById('reg-code').value.trim(),
+        name:        document.getElementById('reg-name').value.trim(),
+        email:       document.getElementById('reg-email').value.trim(),
+        sex:         document.getElementById('reg-sex').value,
+        phone:       document.getElementById('reg-phone').value.trim(),
+        category_id: parseInt(document.getElementById('reg-state').value),
       };
 
-      const res = await fetch('/api/users/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
+      try {
+        const res  = await fetch('/api/users/register', {
+          method:  'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(payload),
+        });
+        const data = await res.json();
 
-      if (data.success) {
-        activeUser = data.user;
-        sessionStorage.setItem('p2p_active_user', JSON.stringify(activeUser));
-        displayMainApp();
-      } else {
-        alert(data.message);
+        if (data.success) {
+          activeUser = data.user;
+          sessionStorage.setItem('p2p_active_user', JSON.stringify(activeUser));
+          displayMainApp();
+        } else {
+          alert(data.message);
+          btn.disabled  = false;
+          btn.innerText = 'Complete Registration — Free';
+        }
+      } catch (err) {
+        alert('Network error. Please try again.');
+        btn.disabled  = false;
+        btn.innerText = 'Complete Registration — Free';
       }
     }
 
+    // ─── Display Main App ────────────────────────────────────
     function displayMainApp() {
-      document.getElementById('active-user-code').innerText = activeUser.code || activeUser.identifier || '---';
-      document.getElementById('active-locked-state').innerText = activeUser.state_name || activeUser.state || '---';
+      document.getElementById('landing-page').classList.add('hidden');
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('main-app').classList.remove('hidden');
+
+      document.getElementById('active-user-code').innerText =
+        activeUser.code || activeUser.identifier || '---';
+      document.getElementById('active-locked-state').innerText =
+        activeUser.state_name || activeUser.state || '---';
       loadPageData();
     }
 
-    function logout() {
+    // ─── Logout ──────────────────────────────────────────────
+    async function logout() {
+      try {
+        await fetch('/api/users/logout', { method: 'POST', credentials: 'same-origin' });
+      } catch(e) {}
+      
       sessionStorage.removeItem('p2p_active_user');
       activeUser = null;
       document.getElementById('main-app').classList.add('hidden');
-      document.getElementById('auth-screen').classList.remove('hidden');
-      showAuthMode('login');
+      document.getElementById('profile-menu').classList.add('hidden');
+      document.getElementById('landing-page').classList.remove('hidden');
     }
 
+    // ─── Tab / Page Switching ────────────────────────────────
     function switchPage(pageType, evt) {
       currentPage = pageType;
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       evt.target.classList.add('active');
 
       if (pageType === 'currency') {
@@ -322,11 +574,12 @@
       loadPageData();
     }
 
+    // ─── Load Feed ───────────────────────────────────────────
     async function loadPageData() {
       const stateLabel = activeUser.state_name || activeUser.state || '';
       document.getElementById('page-title').innerText = `Items available in ${stateLabel}`;
-      
-      const res = await fetch(`/api/exchanges/${currentPage}/${activeUser.state_id}`);
+
+      const res  = await fetch(`/api/exchanges/${currentPage}/${activeUser.state_id}`, { credentials: 'same-origin' });
       const data = await res.json();
       const feed = document.getElementById('order-feed');
       feed.innerHTML = '';
@@ -339,9 +592,10 @@
       const userCode = activeUser.code || activeUser.identifier;
 
       data.entries.forEach(entry => {
-        const isOwner = entry.user_id === userCode;
+        const isOwner   = entry.user_id === userCode;
         const hasMatched = entry.matched_by_users && entry.matched_by_users.includes(userCode);
 
+        // ── Action button ──────────────────────────────────────
         let actionButtonHtml = '';
         if (isOwner) {
           actionButtonHtml = `
@@ -360,16 +614,26 @@
             </button>`;
         }
 
-        const matchBadgeHtml = entry.match_count > 0 
+        // ── Match badge ────────────────────────────────────────
+        const matchBadgeHtml = entry.match_count > 0
           ? `<span class="badge-matched">MATCHED (${entry.match_count})</span>`
           : `<span class="badge-open">OPEN</span>`;
+
+        // ── Contact unlock button (hidden for own listings) ────
+        const unlockBtnHtml = isOwner ? '' : `
+          <button
+            class="btn-link btn-unlock-contact"
+            id="unlock-btn-${currentPage}-${entry.id}"
+            onclick="unlockContact('${currentPage}', ${entry.id}, this)">
+            📞 Get Contact
+          </button>`;
 
         feed.innerHTML += `
           <div class="feed-card">
             <div class="feed-header">
               <span class="user-id-tag">STATE CODE: ${entry.user_id}</span>
               ${matchBadgeHtml}
-              <button class="btn-link" onclick="viewUser('${entry.user_id}')">Contact PCM ➔</button>
+              ${unlockBtnHtml}
             </div>
             <div class="feed-body">
               <div class="feed-row have"><span class="label">I HAVE:</span> <strong>${entry.have}</strong></div>
@@ -383,20 +647,22 @@
       });
     }
 
+    // ─── Submit Listing ──────────────────────────────────────
     async function submitExchangeListing() {
-      const have = document.getElementById('post-have').value.trim();
-      const need = document.getElementById('post-need').value.trim();
+      const have     = document.getElementById('post-have').value.trim();
+      const need     = document.getElementById('post-need').value.trim();
       const userCode = activeUser.code || activeUser.identifier;
 
       if (!have || !need) return alert('Please enter both listing details.');
 
-      const res = await fetch(`/api/exchanges/${currentPage}/${activeUser.state_id}`, {
-        method: 'POST',
+      const res  = await fetch(`/api/exchanges/${currentPage}/${activeUser.state_id}`, {
+        method:  'POST',
+        credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userCode, have, need })
+        body:    JSON.stringify({ user_id: userCode, have, need }),
       });
-
       const data = await res.json();
+
       if (data.success) {
         document.getElementById('post-have').value = '';
         document.getElementById('post-need').value = '';
@@ -406,75 +672,121 @@
       }
     }
 
+    // ─── Mark Matched ────────────────────────────────────────
     async function markAsMatched(entryId) {
       const userCode = activeUser.code || activeUser.identifier;
-      const res = await fetch(`/api/exchanges/${currentPage}/${entryId}/match`, {
-        method: 'POST',
+      const res      = await fetch(`/api/exchanges/${currentPage}/${entryId}/match`, {
+        method:  'POST',
+        credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userCode })
+        body:    JSON.stringify({ user_id: userCode }),
       });
       const data = await res.json();
-
-      if (data.success) {
-        loadPageData();
-      } else {
-        alert(data.message);
-      }
+      if (data.success) { loadPageData(); } else { alert(data.message); }
     }
 
+    // ─── Mark Settled ────────────────────────────────────────
     async function markAsSettled(entryId) {
       if (!confirm('Are you sure this deal is settled? It will be permanently deleted.')) return;
       const userCode = activeUser.code || activeUser.identifier;
 
-      const res = await fetch(`/api/exchanges/${currentPage}/${entryId}?user_id=${userCode}`, {
-        method: 'DELETE'
-      });
+      const res  = await fetch(
+        `/api/exchanges/${currentPage}/${entryId}?user_id=${encodeURIComponent(userCode)}`,
+        { method: 'DELETE', credentials: 'same-origin' }
+      );
       const data = await res.json();
+      if (data.success) { loadPageData(); } else { alert(data.message); }
+    }
 
-      if (data.success) {
-        loadPageData();
-      } else {
-        alert(data.message);
+    // ─── Get Contact (Free) ──────────────────────────────────
+    async function unlockContact(exchangeType, entryId, btn) {
+      const originalText = btn.innerText;
+      btn.disabled  = true;
+      btn.innerText = 'Loading...';
+
+      try {
+        const res  = await fetch(`/api/contact/${exchangeType}/${entryId}`, {
+          method:      'GET',
+          credentials: 'same-origin',
+        });
+        const data = await res.json();
+
+        if (data.success && data.contact) {
+          openContactModal(data.contact);
+          btn.disabled  = false;
+          btn.innerText = '✅ View Contact';
+        } else {
+          alert(data.message || 'Could not load contact details.');
+          btn.disabled  = false;
+          btn.innerText = originalText;
+        }
+      } catch (err) {
+        alert('Network error. Please try again.');
+        btn.disabled  = false;
+        btn.innerText = originalText;
       }
     }
 
-    async function viewUser(id) {
-  try {
-    const res = await fetch(`/api/users/details?id=${encodeURIComponent(id)}`);
-    const data = await res.json();
-    
-    if (data.success) {
-      const u = data.user;
-      document.getElementById('view-code').innerText = u.code || u.identifier || id;
-      document.getElementById('view-name').innerText = u.name || 'N/A';
-      document.getElementById('view-sex').innerText = u.sex || 'N/A';
-      document.getElementById('view-phone').innerText = u.phone || 'N/A';
-      document.getElementById('view-phone-link').href = `tel:${u.phone || ''}`;
-      document.getElementById('view-cat').innerText = u.state || 'N/A';
+    // ─── Open Contact Modal ──────────────────────────────────
+    function openContactModal(contact) {
+      document.getElementById('view-code').innerText  = contact.code  || '---';
+      document.getElementById('view-name').innerText  = contact.name  || '---';
+      document.getElementById('view-sex').innerText   = contact.sex   || '---';
+      document.getElementById('view-phone').innerText = contact.phone || '---';
+      document.getElementById('view-email').innerText = contact.email || '---';
+      document.getElementById('view-phone-link').href = `tel:${contact.phone || ''}`;
+      
+      let waPhone = (contact.phone || '').trim();
+      if (waPhone.startsWith('0')) {
+        waPhone = '234' + waPhone.substring(1);
+      }
+      document.getElementById('view-wa-link').href = `https://wa.me/${waPhone}`;
+      
+      document.getElementById('view-cat').innerText   = contact.state || '---';
 
       const modal = document.getElementById('user-modal');
-      if (modal && typeof modal.showModal === "function") {
+      if (modal && typeof modal.showModal === 'function') {
         modal.showModal();
       } else {
-        alert(`Contact Info:\nCode: ${u.code}\nName: ${u.name}\nPhone: ${u.phone}`);
+        alert(
+          `Contact Info:\nCode: ${contact.code}\nName: ${contact.name}\nPhone: ${contact.phone}`
+        );
       }
-    } else {
-      alert(data.message || 'Could not fetch user info.');
     }
-  } catch (err) {
-    console.error("Error fetching user details:", err);
-    alert('Could not open user contact details.');
-  }
-}
-   
+
     function closeUserModal() {
       const modal = document.getElementById('user-modal');
-      if (modal && typeof modal.close === "function") {
+      if (modal && typeof modal.close === 'function') {
         modal.close();
       } else {
         modal.removeAttribute('open');
       }
     }
+
+    function toggleMobileMenu() {
+      const m = document.getElementById('lp-mobile-menu');
+      if (m) m.classList.toggle('hidden');
+    }
+
+    function closeMobileMenu() {
+      const m = document.getElementById('lp-mobile-menu');
+      if (m) m.classList.add('hidden');
+    }
+
+    function goBackFromAuth() {
+      document.getElementById('auth-screen').classList.add('hidden');
+      if (activeUser) {
+        displayMainApp();
+      } else {
+        document.getElementById('landing-page').classList.remove('hidden');
+      }
+    }
+
   </script>
+
+  <!-- WhatsApp Floating Button -->
+  <a href="https://wa.me/2348025082413" target="_blank" class="whatsapp-float" aria-label="Chat with us on WhatsApp">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="28" height="28" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zM223.9 413.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 334.1l-4.4-7.1c-18.4-29.6-28.1-63.9-28.1-99.1 0-103.7 84.4-188.1 188.1-188.1 55.1 0 106.9 21.5 145.8 60.5 39 39 60.5 90.8 60.5 145.8 0 103.8-84.4 188.2-188.2 188.2zm103.4-141.4c-5.7-2.8-33.6-16.6-38.8-18.5-5.2-1.9-9-2.8-12.8 2.8-3.8 5.7-14.7 18.5-18 22.2-3.3 3.8-6.6 4.3-12.3 1.4-5.7-2.8-24-8.8-45.7-28.2-16.9-15.1-28.3-33.7-31.6-39.4-3.3-5.7-.4-8.8 2.5-11.6 2.6-2.5 5.7-6.6 8.5-9.9 2.8-3.3 3.8-5.7 5.7-9.5 1.9-3.8.9-7.1-.5-9.9-1.4-2.8-12.8-30.9-17.5-42.3-4.6-11.1-9.3-9.6-12.8-9.8-3.3-.2-7.1-.2-10.9-.2-3.8 0-10 1.4-15.2 7.1-5.2 5.7-19.9 19.5-19.9 47.4s20.4 54.9 23.2 58.7c2.8 3.8 40 61.1 96.9 85.7 13.5 5.9 24.1 9.4 32.3 12 13.6 4.3 26.1 3.7 35.9 2.2 11.1-1.7 33.6-13.8 38.3-27.1 4.7-13.3 4.7-24.7 3.3-27.1-1.4-2.4-5.2-3.8-10.9-6.6z"/></svg>
+  </a>
 </body>
 </html>
